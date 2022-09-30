@@ -43,8 +43,8 @@
           </v-col>
         </v-row>
       </v-tab-item>
-      <v-tab-item>
-        <v-row v-if="sales.length > 0" class="justify-center text-center">
+      <v-tab-item v-if="currentTab === 1">
+        <v-row class="justify-center text-center">
           <v-col cols="12">
             <v-simple-table fixed-header>
               <template #default>
@@ -76,7 +76,9 @@
                     <td>
                       <copy-text :value="sale.signature" />
                     </td>
-                    <td class="text--green darken-3">Sale</td>
+                    <td>
+                      {{ sale.type }}
+                    </td>
                     <td>{{ (sale.blockTime * 1000) | duration }}</td>
                     <td>{{ sale.price }} SOL</td>
                     <td>
@@ -89,7 +91,7 @@
                         text
                         color="#99aab5"
                         :loading="isLoading"
-                        @click="onLoadMore(sales.length + 100)"
+                        @click="onLoadMore(sales.length)"
                       >
                         Load More
                       </v-btn>

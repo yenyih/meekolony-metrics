@@ -105,7 +105,7 @@ export class MeekolonyService {
           params: queriesDto,
         },
       );
-      result = data.filter((activity) => activity.type === 'buyNow');
+      result = data;
       const mintAddresses = result.map((each) => new PublicKey(each.tokenMint));
       const allMetadata = await this.metaplex
         .nfts()
