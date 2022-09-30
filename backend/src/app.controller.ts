@@ -1,13 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
 import { AppService } from './app.service';
-import { getStatusDto } from './get-status.dto';
+import { StatusDto } from './status.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getAppStatus(): getStatusDto {
+  @ApiOkResponse({ type: StatusDto })
+  getAppStatus(): StatusDto {
     return this.appService.getStatus();
   }
 }
