@@ -7,7 +7,7 @@ A web application to certain metrics of the Tatsumeeko: Meekolony Pass collectio
 - [x] Get listings on Magic Eden
 - [x] Get sales on Magic Eden
 - [x] Get Meekolony NFTs for a particular user address*
-- [] Get number of unique holders for the Meekolony collection* (WIP)
+- [ ] Get number of unique holders for the Meekolony collection* (WIP)
 
 # Frontend
 - [x] Meekolony Collection Page
