@@ -25,10 +25,7 @@
             md="3"
             sm="4"
           >
-            <meekolony-card
-              :value="collection"
-              @click="viewActivities(collection)"
-            />
+            <meekolony-card :value="collection" />
           </v-col>
           <v-col
             v-if="collections && collections.length > 0"
@@ -105,63 +102,6 @@
         </v-row>
       </v-tab-item>
     </v-tabs-items>
-    <v-dialog
-      v-model="isOpen"
-      fullscreen
-      hide-overlay
-      transition="dialog-bottom-transition"
-    >
-      <v-card>
-        <v-toolbar dark color="#7289da">
-          <v-btn icon dark @click="onActivityClose">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-toolbar-title>
-            {{ selectedMeeko ? selectedMeeko.name : '' }}
-            Activities
-          </v-toolbar-title>
-          <v-spacer></v-spacer>
-        </v-toolbar>
-        <v-row v-if="selectedMeeko" class="justify-center pt-5">
-          <v-col cols="12">
-            <v-img contain :src="selectedMeeko.image" max-height="150" />
-          </v-col>
-          <v-col cols="12" class="text-center">
-            Owner: <copy-text :value="selectedMeeko.owner" />, Price: {{ selectedMeeko.price }} SOL
-          </v-col>
-          <v-col cols="12">
-            <div class="d-flex flex-wrap px-5 pb-5">
-              <v-chip v-for="attribute in selectedMeeko.attributes" :key="attribute.trait_type" class="mx-2 my-2">
-                {{ attribute.trait_type }}: {{ attribute.value }}
-              </v-chip>
-            </div>
-          </v-col>
-        </v-row>
-        <v-data-table
-          :headers="headers"
-          :items="meekoActivities"
-          :items-per-page="15"
-          :loading="isLoading"
-          class="elevation-1"
-        >
-          <template #[`item.signature`]="{ item }">
-            <copy-text :value="item.signature" />
-          </template>
-          <template #[`item.buyer`]="{ item }">
-            <copy-text :value="item.buyer || ''" />
-          </template>
-          <template #[`item.seller`]="{ item }">
-            <copy-text :value="item.seller || ''" />
-          </template>
-          <template #[`item.price`]="{ item }">
-            {{ item.price.toFixed(2) }} SOL
-          </template>
-          <template #[`item.blockTime`]="{ item }">
-            {{ (item.blockTime * 1000) | duration }}
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
@@ -182,21 +122,10 @@ export default {
     availableTabs: ['collections', 'sales'],
     collections: [],
     currentTab: 'collections',
-    profile: {},
     isLoading: false,
     polling: null,
-    sales: [],
-    meekoActivities: [],
-    isOpen: false,
-    selectedMeeko: null,
-    headers: [
-      { text: 'Transaction ID', value: 'signature' },
-      { text: 'Transaction Type', value: 'type' },
-      { text: 'Time', value: 'blockTime' },
-      { text: 'Total Amount', value: 'price' },
-      { text: 'Buyer', value: 'buyer' },
-      { text: 'Seller', value: 'seller' },
-    ],
+    profile: {},
+    sales: []
   }),
   async beforeMount() {
     this.isLoading = true
@@ -285,30 +214,30 @@ export default {
       }
       this.isLoading = false
     },
-    async viewActivities(collection) {
-      if (this.isLoading) return
-      try {
-        this.isOpen = true
-        this.isLoading = true
-        this.selectedMeeko = collection
-        const { data } = await this.$axios.get(
-          `/${collection.mintAddress}/sales`
-        )
-        this.meekoActivities = data
-      } catch (error) {
-        const message = error.response
-          ? error.response.data.message
-          : 'Oops... something went wrong.'
-        this.$toast.error(message)
-      } finally {
-        this.isLoading = false
-      }
-    },
-    onActivityClose() {
-      this.isOpen = false
-      this.meekoActivities = []
-      this.selectedMeeko = null
-    },
+    // async viewActivities(collection) {
+    //   if (this.isLoading) return
+    //   try {
+    //     this.isOpen = true
+    //     this.isLoading = true
+    //     this.selectedMeeko = collection
+    //     const { data } = await this.$axios.get(
+    //       `/${collection.mintAddress}/sales`
+    //     )
+    //     this.meekoActivities = data
+    //   } catch (error) {
+    //     const message = error.response
+    //       ? error.response.data.message
+    //       : 'Oops... something went wrong.'
+    //     this.$toast.error(message)
+    //   } finally {
+    //     this.isLoading = false
+    //   }
+    // },
+    // onActivityClose() {
+    //   this.isOpen = false
+    //   this.meekoActivities = []
+    //   this.selectedMeeko = null
+    // },
     async onTabChange(tab) {
       if (tab === 1) {
         this.isLoading = true
