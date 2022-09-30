@@ -2,6 +2,17 @@
 
 A web application to certain metrics of the Tatsumeeko: Meekolony Pass collection and check the market trends of it.
 
+# Backend
+- [x] Get floor price for Meekolony on Magic Eden
+- [x] Get listings on Magic Eden
+- [x] Get sales on Magic Eden
+- [x] Get Meekolony NFTs for a particular user address*
+- [] Get number of unique holders for the Meekolony collection* (WIP)
+
+# Frontend
+- [x] Meekolony Collection Page
+- [x] Meekolony Holder Page
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
