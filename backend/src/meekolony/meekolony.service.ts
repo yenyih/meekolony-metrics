@@ -2,7 +2,11 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { HttpService } from 'nestjs-http-promise';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
 import { Metaplex } from '@metaplex-foundation/js';
+import { MeekolonyPassDto } from './dto/meekolony-pass.dto';
 import { QueriesDto } from './dto/queries.dto';
+import { MeekolonyCollectionDto } from './dto/meekolony-collection.dto';
+import { MeekolonyMetadataDto } from './dto/meekolony-metadata.dto';
+import { MeekolonySalesDto } from './dto/meekolony-sales.dto';
 
 const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -16,29 +20,29 @@ export class MeekolonyService {
     this.metaplex = new Metaplex(this.connection);
   }
 
-  async getMeekoByOwner(ownerAddress: string) {
+  async getMeekoByOwner(ownerAddress: string): Promise<MeekolonyMetadataDto[]> {
     try {
       const nfts = await this.metaplex
         .nfts()
         .findAllByOwner({ owner: new PublicKey(ownerAddress) })
         .run();
 
-      const operations = nfts.reduce((result, nft) => {
-        if (!nft.symbol.includes('MKLN')) return result;
-        result.push(this.httpService.get(nft.uri));
-        return result;
-      }, []);
-      const responses = await Promise.all(operations);
-      return responses.map((res, index) => ({
-        ...res.data,
-        metadata: nfts[index],
-      }));
+      const result = [];
+
+      for (const nft of nfts) {
+        if (!nft.symbol.includes('MKLN')) continue;
+
+        const { data } = await this.httpService.get(nft.uri);
+        result.push({ ...nft, ...data });
+      }
+
+      return result;
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
   }
 
-  async getMeekoInfo() {
+  async getMeekoInfo(): Promise<MeekolonyPassDto> {
     try {
       const { data } = await this.httpService.get(`/collections/meekolony`);
       return data;
@@ -49,7 +53,9 @@ export class MeekolonyService {
     }
   }
 
-  async getMeekoCollections(queriesDto: QueriesDto) {
+  async getMeekoCollections(
+    queriesDto: QueriesDto,
+  ): Promise<MeekolonyCollectionDto[]> {
     try {
       const { data } = await this.httpService.get(
         `/collections/meekolony/listings`,
@@ -60,7 +66,7 @@ export class MeekolonyService {
 
       if (data.length === 0) return data;
 
-      await delay(1500); // removable: due to rate limit
+      await delay(1500); // Temporary: due to Magic Eden rate limit.
 
       const tokenMints = data.map((item) =>
         this.httpService.get(`/tokens/${item.tokenMint}`),
@@ -77,7 +83,7 @@ export class MeekolonyService {
     }
   }
 
-  async getMeekoDetails(tokenMint: string) {
+  async getMeekoDetails(tokenMint: string): Promise<MeekolonyCollectionDto> {
     try {
       const { data } = await this.httpService.get(`/tokens/${tokenMint}`);
       return data;
@@ -88,7 +94,9 @@ export class MeekolonyService {
     }
   }
 
-  async getMeekoCollectionSales(queriesDto: QueriesDto) {
+  async getMeekoCollectionSales(
+    queriesDto: QueriesDto,
+  ): Promise<MeekolonySalesDto[]> {
     try {
       let result = [];
       const { data } = await this.httpService.get(
@@ -116,7 +124,10 @@ export class MeekolonyService {
     }
   }
 
-  async getSingleMeekoSales(tokenMint: string, queriesDto: QueriesDto) {
+  async getSingleMeekoSales(
+    tokenMint: string,
+    queriesDto: QueriesDto,
+  ): Promise<MeekolonySalesDto[]> {
     try {
       const { data } = await this.httpService.get(
         `/tokens/${tokenMint}/activities`,
@@ -134,7 +145,7 @@ export class MeekolonyService {
 
   async getUniqueHolders() {
     try {
-      // still under development
+      // WIP ...
       return {};
     } catch (error) {
       throw new HttpException(error.message, 400);
