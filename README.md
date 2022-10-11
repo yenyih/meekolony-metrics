@@ -70,11 +70,14 @@ npm run start:dev
 
 ## Running the frontend
 
+Define environment variables.
+Create a `.env` file in the backend directory. To view the available environment variables, please refer `.env.example` file.
+
 ```
 npm run dev
 ```
 
-> * Note: Frontend default port is running on 8080, it can be change under package.json.
+> * Note: Frontend default port is running on 8080, it can be change with environment variable.
 
 ## Built With
 
