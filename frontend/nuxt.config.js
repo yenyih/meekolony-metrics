@@ -49,7 +49,19 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'http://localhost:3000/api/v1/meekolony',
+    baseURL: process.env.API_URL,
+  },
+
+  publicRuntimeConfig: {
+    API_URL: process.env.API_URL
+  },
+  privateRuntimeConfig: {
+  },
+
+  server: {
+    port: process.env.APP_PORT || 8080,
+    host: '0.0.0.0',
+    timing: false
   },
 
   toast: {
